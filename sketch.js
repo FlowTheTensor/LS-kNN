@@ -314,7 +314,7 @@ function zeichneForm(form, px, py, r) {
 
 function zeichneDatenpunkt(p, px, py, alpha, gross) {
   const kl = SZ.klassen[p.k];
-  stroke(255);
+  stroke(...FARBE.flaeche);
   strokeWeight(1.4);
   fill(kl.farbe[0], kl.farbe[1], kl.farbe[2], alpha);
   zeichneForm(kl.form, px, py, gross ? 8 : 6.5);
@@ -329,13 +329,13 @@ function zeichneDatenpunkt(p, px, py, alpha, gross) {
 function zeichneAnfrage(a, px, py, istAktiv, klasse) {
   const r = istAktiv ? 13 : 10;
   noStroke();
-  fill(29, 29, 28, 40);
+  fill(...FARBE.schatten, 40);
   quad(px + 1, py - r + 2, px + r + 1, py + 2, px + 1, py + r + 2, px - r + 1, py + 2);
   if (klasse !== null) {
     const f = SZ.klassen[klasse].farbe;
     fill(...f);
   } else {
-    fill(255);
+    fill(...FARBE.flaeche);
   }
   stroke(...FARBE.text);
   strokeWeight(istAktiv ? 3 : 2);
@@ -434,7 +434,7 @@ function zeichneDatenPanel() {
   // Gitter
   const anzX = Math.round((m1.max - m1.min) / m1.gitter);
   const anzY = Math.round((m2.max - m2.min) / m2.gitter);
-  stroke(0, 0, 0, 22);
+  stroke(...FARBE.text, 22);
   strokeWeight(1);
   for (let i = 0; i <= anzX; i++) {
     const [gx] = zuPlot(m1.min + i * m1.gitter, m2.min);
@@ -463,7 +463,7 @@ function zeichneDatenPanel() {
       const [px, py] = zuPlot(e.p.x, e.p.y);
       const r = rang.get(e.p);
       const stark = stufe === 2 && r <= 10 ? map(r, 1, 10, 150, 60) : 45;
-      stroke(29, 29, 28, stark);
+      stroke(...FARBE.text, stark);
       strokeWeight(stufe === 2 && r <= 10 ? 1.4 : 1);
       line(ax, ay, px, py);
     }
@@ -505,7 +505,7 @@ function zeichneDatenPanel() {
       noStroke();
       fill(...FARBE.text);
       circle(px + 11, py - 11, 16);
-      fill(255);
+      fill(...FARBE.textInvers);
       textFont(MONO);
       textStyle(BOLD);
       textSize(10);
@@ -593,7 +593,7 @@ function zeichneLegende() {
     if (e.k >= 0) {
       zeichneDatenpunkt({ k: e.k }, x + 6, y, 235, false);
     } else {
-      fill(255);
+      fill(...FARBE.flaeche);
       stroke(...FARBE.text);
       strokeWeight(2);
       quad(x + 6, y - 7, x + 13, y, x + 6, y + 7, x - 1, y);
@@ -942,7 +942,7 @@ function zeichneKonfusion() {
       const y = y0 + i * zh;
       stroke(...FARBE.linie);
       strokeWeight(1);
-      fill(...(i === j ? [228, 241, 233] : m[i][j] > 0 ? [251, 225, 230] : [250, 248, 244]));
+      fill(...(i === j ? FARBE.gruenFlaeche : m[i][j] > 0 ? FARBE.rotFlaeche : FARBE.papier));
       rect(x, y, zw, zh);
       noStroke();
       fill(...(i === j ? FARBE.gruen : m[i][j] > 0 ? FARBE.akzent : FARBE.blass));

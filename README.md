@@ -121,6 +121,7 @@ Jeder Trainingspunkt wird einmal herausgenommen und von den übrigen klassifizie
 | Klick ins Diagramm | aktive Anfrage dorthin setzen |
 | **Tab** | zwischen mehreren Anfragen wechseln (z. B. David ↔ Alex) |
 | Maus über einem Punkt | Nummer, Merkmale, Klasse und Abstand zur Anfrage |
+| Mond / Sonne oben rechts | dunkles oder helles Farbschema; die Wahl wird im Browser gespeichert und gilt für alle Lernsituationen |
 
 **Einstellungen:** k (1 … 25), Abstand (euklidisch / Manhattan), Tempo, Merkmale skalieren, Linien zu allen Punkten zeigen. Unter dem Diagramm lassen sich die Entscheidungsfläche und die Ausreißer einblenden. Das Feld rechts zeigt die **Rangliste** der Nachbarn für die aktive Anfrage. „Neue Messdaten“ erzeugt einen neuen Datensatz mit denselben Klassen (nicht beim Skript-Beispiel), „CSV speichern“ lädt die Daten herunter (z. B. für Excel oder Python).
 
@@ -150,6 +151,7 @@ Jeder Trainingspunkt wird einmal herausgenommen und von den übrigen klassifizie
 | `ui.js` | Knöpfe, Regler, Auswahllisten, Kästchen |
 | `sketch.js` | Ablauf, Zeichnen, Erklärtexte |
 | `assets/logo-jps.png` | Logo der Jakob-Preh-Schule |
+| `assets/logo-jps-hell.png` | Logo in Weiß für das dunkle Farbschema |
 | `libraries/p5.min.js` | p5.js (lokal, damit die Seite auch offline läuft) |
 
 Ein weiteres Beispiel lässt sich ergänzen, indem man in `daten.js` einen Eintrag in `SZENARIEN` hinzufügt (zwei Merkmale, Klassen mit Farbe und Form, Daten als Punktwolken, Linien, Kreis oder feste Liste, Anfragen, Ausreißer, Wörter für die Texte). Es erscheint dann automatisch als weiterer Reiter in der Beispiel-Leiste.
@@ -167,6 +169,7 @@ Am einfachsten in VS Code mit der Erweiterung **Live Server**: Rechtsklick auf `
 - Jeder Datensatz wird mit festem Startwert erzeugt und ist deshalb bei jedem Start gleich. Erst „Neue Messdaten“ würfelt neu.
 - Die Entscheidungsfläche wird zwischengespeichert und nur neu berechnet, wenn sich Daten, k, Abstand oder Skalierung ändern.
 - `basis.js` ist in allen KI-Klassifikations-Seiten (Logistische Regression, kNN, Naiver Bayes, Entscheidungsbaum) identisch.
+- **Farbschema hell/dunkel:** Alle Farben stehen in zwei Paletten (`FARBE_HELL`, `FARBE_DUNKEL`); `FARBE` enthält die aktive Palette und wird beim Umschalten in place überschrieben. Die CSS-Variablen in `style.css` wechseln über die Klasse `dunkelmodus` am `<html>`-Element. Die Wahl steht im `localStorage` unter `jps-lernsituationen-farbschema` (ohne Speicher gilt die Systemeinstellung). Im dunklen Schema zeigt die Kopfzeile `assets/logo-jps-hell.png`.
 
 ## Lizenz
 
@@ -187,5 +190,5 @@ Vorschlag für die Namensnennung: *„KI-Klassifikation · k-nächste Nachbarn (
 | Bestandteil | Rechte |
 |---|---|
 | `libraries/p5.min.js` | [p5.js](https://p5js.org), GNU LGPL 2.1 |
-| `assets/logo-jps.png` | Logo der Jakob-Preh-Schule – alle Rechte bei der Schule |
+| `assets/logo-jps.png`, `assets/logo-jps-hell.png` | Logo der Jakob-Preh-Schule – alle Rechte bei der Schule |
 | Schriften Quicksand, Inter, JetBrains Mono | über Google Fonts eingebunden, SIL Open Font License 1.1 |

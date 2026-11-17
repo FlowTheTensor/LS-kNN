@@ -65,7 +65,7 @@ const SZENARIEN = {
     ],
     klassen: [
       { name: "rot", farbe: [200, 30, 58], form: "kreis" },
-      { name: "schwarz", farbe: [40, 40, 38], form: "quadrat" },
+      { name: "schwarz", farbe: FARBE.teilSchwarz, form: "quadrat" },
       { name: "silber", farbe: [120, 135, 150], form: "dreieck" },
     ],
     // je Klasse: Mittelwert und Streuung beider Merkmale, Anzahl

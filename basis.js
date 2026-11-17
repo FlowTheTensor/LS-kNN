@@ -60,8 +60,8 @@ function ladeSchriften() {
   }
 }
 
-// Farben nach dem Corporate Design der Jakob-Preh-Schule (bsnes.de)
-const FARBE = {
+// Farben nach dem Corporate Design der Jakob-Preh-Schule (bsnes.de): hell und dunkel
+const FARBE_HELL = {
   papier: [251, 249, 245],
   flaeche: [255, 255, 255],
   flaeche2: [243, 238, 230],
@@ -75,7 +75,77 @@ const FARBE = {
   blau: [44, 92, 150],
   gruen: [52, 128, 84],
   neutral: [160, 155, 146],
+  // für Flächen und Schrift auf Flächen
+  textInvers: [255, 255, 255], // Schrift auf FARBE.text
+  dunkelFlaeche: [29, 29, 28], // Tooltip/Banner mit weißer Schrift
+  schatten: [29, 29, 28],
+  akzentFlaeche: [253, 240, 242],
+  akzentLinie: [240, 200, 208],
+  rotFlaeche: [251, 225, 230],
+  gruenFlaeche: [228, 241, 233],
+  teilSchwarz: [40, 40, 38], // schwarzes Werkstück
 };
+
+const FARBE_DUNKEL = {
+  papier: [22, 22, 21],
+  flaeche: [32, 31, 30],
+  flaeche2: [44, 42, 40],
+  linie: [62, 59, 55],
+  text: [236, 232, 224],
+  grau: [184, 178, 168],
+  blass: [140, 135, 126],
+  akzent: [236, 76, 98],
+  akzentHell: [255, 64, 92],
+  senf: [222, 166, 72],
+  blau: [104, 156, 222],
+  gruen: [96, 186, 132],
+  neutral: [120, 116, 108],
+  textInvers: [22, 22, 21],
+  dunkelFlaeche: [70, 67, 62],
+  schatten: [0, 0, 0],
+  akzentFlaeche: [52, 27, 32],
+  akzentLinie: [104, 44, 56],
+  rotFlaeche: [72, 32, 40],
+  gruenFlaeche: [30, 54, 41],
+  teilSchwarz: [128, 126, 120],
+};
+
+const FARBE = {};
+
+// --- Farbschema hell/dunkel ---------------------------------------------------
+// FARBE enthält immer die aktive Palette. Beim Umschalten werden die Arrays
+// in place überschrieben, damit Verweise wie [FARBE.blau, …] gültig bleiben.
+// Die Wahl gilt für alle Lernsituationen (gleicher localStorage-Schlüssel).
+const FARBSCHEMA_SCHLUESSEL = "jps-lernsituationen-farbschema";
+let dunkelModus = false;
+
+function setzeFarbschema(dunkel) {
+  dunkelModus = !!dunkel;
+  const quelle = dunkelModus ? FARBE_DUNKEL : FARBE_HELL;
+  for (const k in quelle) {
+    if (FARBE[k]) {
+      FARBE[k].splice(0, FARBE[k].length, ...quelle[k]);
+    } else {
+      FARBE[k] = quelle[k].slice();
+    }
+  }
+  document.documentElement.classList.toggle("dunkelmodus", dunkelModus);
+}
+
+function gespeichertesFarbschema() {
+  try {
+    const v = localStorage.getItem(FARBSCHEMA_SCHLUESSEL);
+    if (v === "dunkel" || v === "hell") {
+      return v === "dunkel";
+    }
+  } catch (e) {
+    // kein Speicher verfügbar (z. B. privater Modus) – Systemeinstellung nehmen
+  }
+  return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+}
+
+setzeFarbschema(gespeichertesFarbschema());
+
 
 // Klassenfarben (Klasse 0, 1, 2) – gut unterscheidbar, auch für Rot-Grün-Schwäche
 const KLASSEN_FARBE = [FARBE.blau, FARBE.akzent, FARBE.senf];
@@ -231,7 +301,7 @@ function clipEnde() {
 // Karte im Stil der Schule: weiße Fläche, feine Linie, Titel mit rotem Punkt
 function panel(p) {
   noStroke();
-  fill(29, 29, 28, 10);
+  fill(...FARBE.schatten, 10);
   rect(p.x + 1, p.y + 3, p.w, p.h, 12);
   fill(...FARBE.flaeche);
   stroke(...FARBE.linie);
@@ -269,7 +339,7 @@ function marke(s, x, y, farbe, ausrichtung) {
   textStyle(BOLD);
   const w = textWidth(s) + 12;
   const lx = ausrichtung === RIGHT ? x - w : ausrichtung === CENTER ? x - w / 2 : x;
-  fill(255, 240);
+  fill(...FARBE.flaeche, 240);
   stroke(...farbe);
   strokeWeight(1.2);
   rect(lx, y - 10, w, 20, 6);
@@ -287,7 +357,7 @@ function banner(s, cx, y, rot) {
   textSize(14);
   const b = textWidth(s) + 28;
   noStroke();
-  fill(...(rot ? [...FARBE.akzent, 235] : [29, 29, 28, 225]));
+  fill(...(rot ? [...FARBE.akzent, 235] : [...FARBE.dunkelFlaeche, 225]));
   rect(cx - b / 2, y, b, 32, 16);
   fill(255);
   textAlign(CENTER, CENTER);
@@ -316,7 +386,7 @@ function tooltip(zeilen) {
   const tx = Math.min(mx + 14, W - w - 10);
   const ty = Math.min(my + 14, H_INHALT - h - 6);
   noStroke();
-  fill(29, 29, 28, 235);
+  fill(...FARBE.dunkelFlaeche, 235);
   rect(tx, ty, w, h, 6);
   fill(255);
   textAlign(LEFT, CENTER);
@@ -398,9 +468,9 @@ function zeichneKopf() {
 // Beispiel (HTML-Knöpfe, siehe ui.js). Gleiches Schema in allen PW-Programmen.
 function zeichneBeispielLeiste() {
   noStroke();
-  fill(253, 240, 242);
+  fill(...FARBE.akzentFlaeche);
   rect(0, 56, W, LEISTE);
-  stroke(240, 200, 208);
+  stroke(...FARBE.akzentLinie);
   strokeWeight(1);
   line(0, 56 + LEISTE, W, 56 + LEISTE);
   noStroke();
@@ -472,7 +542,50 @@ let huelle;
 function erstelleHuelle() {
   huelle = createDiv();
   huelle.addClass("huelle");
-  ui.logo = platziere(createImg("assets/logo-jps.png", "Logo der Jakob-Preh-Schule"), 14, 3, 122, "logo");
+  ui.logo = platziere(createImg(logoPfad(), "Logo der Jakob-Preh-Schule"), 14, 3, 122, "logo");
+  erstelleFarbschemaKnopf();
+}
+
+// --- Schalter hell/dunkel rechts in der Kopfzeile (gleich in allen LS) --------
+const SYMBOL_MOND =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';
+const SYMBOL_SONNE =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/></svg>';
+
+function logoPfad() {
+  return dunkelModus ? "assets/logo-jps-hell.png" : "assets/logo-jps.png";
+}
+
+function erstelleFarbschemaKnopf() {
+  ui.farbschema = platziere(createButton(""), 1544, 12, 32, "kopf", "farbschema");
+  ui.farbschema.mousePressed(() => {
+    wechsleFarbschema();
+    ui.farbschema.elt.blur();
+  });
+  aktualisiereFarbschemaKnopf();
+}
+
+function aktualisiereFarbschemaKnopf() {
+  if (ui.logo) {
+    ui.logo.elt.src = logoPfad();
+  }
+  if (!ui.farbschema) {
+    return;
+  }
+  ui.farbschema.html(dunkelModus ? SYMBOL_SONNE : SYMBOL_MOND);
+  const titel = dunkelModus ? "Zum hellen Farbschema wechseln" : "Zum dunklen Farbschema wechseln";
+  ui.farbschema.attribute("title", titel);
+  ui.farbschema.attribute("aria-label", titel);
+}
+
+function wechsleFarbschema() {
+  setzeFarbschema(!dunkelModus);
+  try {
+    localStorage.setItem(FARBSCHEMA_SCHLUESSEL, dunkelModus ? "dunkel" : "hell");
+  } catch (e) {
+    // ohne Speicher gilt die Wahl nur bis zum Neuladen
+  }
+  aktualisiereFarbschemaKnopf();
 }
 
 function platziere(el, x, y, w, ...klassen) {
